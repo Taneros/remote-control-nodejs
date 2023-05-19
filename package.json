@@ -13,10 +13,10 @@
     "keywords": [],
     "license": "ISC",
     "devDependencies": {
-        "nodemon": "^2.0.16"
+        "nodemon": "^2.0.16",
+        "ws": "^8.13.0"
     },
     "dependencies": {
-        "@nut-tree/nut-js": "^2.3.0",
-        "ws": "^8.8.0"
+        "@nut-tree/nut-js": "^2.3.0"
     }
 }
