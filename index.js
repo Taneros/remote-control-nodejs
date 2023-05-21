@@ -87,6 +87,36 @@ wss.on( 'connection', function connection ( ws ) {
               client.send( text.split( ' ' )[0] )
 
               break;
+            
+            case /^draw_square/.test( text ):
+              console.log( `index.js - line: 47 ->> draw_circle`, )
+
+              const sideLength = Number( text.split( ' ' )[1].trim() ); // Radius of the circle
+
+              await mouse.move(up(sideLength));
+              await mouse.move(right(sideLength));
+              await mouse.move(down(sideLength));
+              await mouse.move( left( sideLength ) );
+
+              client.send( text.split( ' ' )[0] )
+
+              break;
+           
+            case /^draw_rectangle/.test( text ):
+              console.log( `index.js - line: 47 ->> draw_circle`, )
+
+              const sideLengthLong = Number( text.split( ' ' )[2].trim() ); // Radius of the circle
+              const sideLengthShort = Number( text.split( ' ' )[1].trim() ); // Radius of the circle
+
+              await mouse.move(up(sideLengthShort));
+              await mouse.move(right(sideLengthLong));
+              await mouse.move(down(sideLengthShort));
+              await mouse.move( left( sideLengthLong ) );
+              
+
+              client.send( text.split( ' ' )[0] )
+
+              break;
 
             default:
               client.send( text )
