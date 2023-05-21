@@ -1,38 +1,102 @@
-import WebSocket, { WebSocketServer } from 'ws';
-import { httpServer } from "./src/http_server/index.js";
-import { mouse, left, right, up, down } from "@nut-tree/nut-js";
+import WebSocket, {WebSocketServer} from 'ws';
+import {httpServer} from "./src/http_server/index.js";
+import {mouse, left, right, up, down, straightTo} from "@nut-tree/nut-js";
+
+// import pkg from '@nut-tree/nut-js';
+// const {mouse, left, right, up, down, getPosition} = pkg;
 
 const HTTP_PORT = 8181;
 
-console.log(`Start static http server on the ${HTTP_PORT} port!`);
+console.log( `Start static http server on the ${ HTTP_PORT } port!` );
 
 const wss = new WebSocketServer( {server: httpServer} )
 
-wss.on('connection', function connection(ws) {
+wss.on( 'connection', function connection ( ws ) {
   ws.on( 'message', function incoming ( data ) {
-      
+
+    wss.clients.forEach( async function each ( client ) {
+      if ( !client !== ws && client.readyState === WebSocket.OPEN ) {
+        if ( typeof data === 'string' ) {
+          client.send( data )
+        } else if ( data instanceof Buffer ) {
+          const text = data.toString( 'utf8' );
+          console.log( `index.js - line: 30 ->> text`, text )
+
+          switch ( true ) {
+            case /^mouse_up/.test( text ):
+              console.log( `index.js - line: 26 ->> up`, );
+              await mouse.move( up( Number( text.split( ' ' )[1].trim() ) ) );
+              break;
 
 
-    (async () => {
-      await mouse.move(left(500));
-      await mouse.move(up(500));
-      await mouse.move(right(500));
-      await mouse.move(down(500))
-  })();
+            case /^mouse_down/.test( text ):
+              console.log( `index.js - line: 34 ->> down`, );
+              await mouse.move( down( Number( text.split( ' ' )[1].trim() ) ) );
+              break;
 
-        wss.clients.forEach(function each(client) {
-            if ( !client !== ws && client.readyState === WebSocket.OPEN ) {
-              if ( typeof data === 'string' ) {
-                console.log(`index.js - line: 18 ->> client.send TEXT`)
-                client.send( data )
-              } else if (data instanceof Buffer) {
-                console.log(`index.js - line: 21 ->> client.send BUFFER`, )
-                const text = data.toString( 'utf8' );
-                client.send( text )
+
+            case /^mouse_left/.test( text ):
+              console.log( `index.js - line: 41 ->> left`, );
+              await mouse.move( left( Number( text.split( ' ' )[1].trim() ) ) );
+              break;
+
+
+            case /^mouse_right/.test( text ):
+              console.log( `index.js - line: 48 ->> right`, );
+              await mouse.move( right( Number( text.split( ' ' )[1].trim() ) ) );
+              break;
+
+            case /^mouse_position/.test( text ):
+              console.log( `index.js - line: 47 ->> mouse_position`, )
+
+              const {x, y} = await mouse.getPosition()
+
+              console.log( `index.js - line: 52 ->> position`, x, y )
+              // await mouse.move(right(Number(text.split(' ')[1].trim())));
+              client.send( `mouse_position ${ x },${ y }` )
+              break;
+
+            case /^draw_circle/.test( text ):
+              console.log( `index.js - line: 47 ->> draw_circle`, )
+
+              // await mouse.move(right(Number(text.split(' ')[1].trim())));
+              // client.send( `mouse_position ${x},${y}` )
+              const {x: xC, y: yC} = await mouse.getPosition()
+
+              console.log(`index.js - line: 66 ->> xC, yC`, xC, yC)
+
+              const centerX = xC; // X coordinate of the center point
+              const centerY = yC; // Y coordinate of the center point
+              const radius = Number( text.split( ' ' )[1].trim() ); // Radius of the circle
+              const numSteps = Array.from({length: 1000}, (_,i) => i); // Number of steps for circular movement
+              
+              console.log(`index.js - line: 71 ->> centerX, centerY, radius, numSteps`, centerX, centerY, radius, )
+
+              for await ( const i of numSteps ) {
+                // console.log(`index.js - line: 74 ->> move FOR`, i)
+
+                // get current position
+
+                const angle = ( Math.PI * 2 * i ) / numSteps.length;
+                const xCoord = centerX + ( radius - radius * Math.cos( angle ) );
+                const yCoord = centerY + radius * Math.sin( angle );
+                // console.log(`index.js - line: 80 ->> angle, xCoord, yCoord`, angle, xCoord, yCoord )
+                await mouse.move(straightTo({x: xCoord, y: yCoord}));
               }
-            }
-        })
-    })
+
+              client.send( text.split( ' ' )[0] )
+
+              break;
+
+            default:
+              client.send( text )
+              break;
+          }
+
+        }
+      }
+    } )
+  } )
 } )
 
 httpServer.listen( HTTP_PORT );
