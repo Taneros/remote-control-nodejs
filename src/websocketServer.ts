@@ -1,10 +1,10 @@
+import { down, left, mouse, right, up } from "@nut-tree/nut-js";
 import WebSocket, { WebSocketServer } from 'ws';
-import { httpServer } from "./http_server/index";
-import { mouse, left, right, up, down, straightTo, screen } from "@nut-tree/nut-js";
-import { getScreenshot } from './screenshot';
-import { drawSquare } from './drawSquare';
-import { drawRectangle } from './drawRectangle';
 import { drawCircle } from './drawCircle';
+import { drawRectangle } from './drawRectangle';
+import { drawSquare } from './drawSquare';
+import { httpServer } from "./http_server/index";
+import { getScreenshot } from './screenshot';
 
 const HTTP_PORT = 8181;
 
@@ -40,9 +40,7 @@ wss.on('connection', function connection(ws) {
               break;
 
             case /^mouse_position/.test(text):
-
               const { x, y } = await mouse.getPosition()
-
               client.send(`mouse_position ${x},${y}`)
               break;
 

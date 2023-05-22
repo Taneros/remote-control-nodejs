@@ -19,7 +19,7 @@ const getScreenshot = async (client: WebSocket) => {
       const imgDataOnly = base64Buff.split('data:image/png;base64,')[1]
 
       client.send(`prnt_scrn ${imgDataOnly}`, (errPrint) => {
-        if (errPrint) console.log(`screenshot.ts - line: 17 ->> err send`, errPrint)
+        if (errPrint) console.log(errPrint)
       })
     })
   }))
