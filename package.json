@@ -12,6 +12,7 @@
     "keywords": [],
     "license": "ISC",
     "devDependencies": {
+        "@types/jimp": "^0.2.28",
         "@types/node": "^20.2.3",
         "@types/ws": "^8.5.4",
         "nodemon": "^2.0.22",
@@ -20,6 +21,7 @@
         "ws": "^8.13.0"
     },
     "dependencies": {
-        "@nut-tree/nut-js": "^2.3.0"
+        "@nut-tree/nut-js": "^2.3.0",
+        "jimp": "^0.22.8"
     }
 }

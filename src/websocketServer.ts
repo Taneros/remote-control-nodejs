@@ -1,6 +1,7 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { httpServer } from "./http_server/index";
-import { mouse, left, right, up, down, straightTo } from "@nut-tree/nut-js";
+import { mouse, left, right, up, down, straightTo, screen } from "@nut-tree/nut-js";
+import { getScreenshot } from './screenshot';
 
 const HTTP_PORT = 8181;
 
@@ -88,6 +89,12 @@ wss.on('connection', function connection(ws) {
               await mouse.move(down(sideLengthShort));
               await mouse.move(left(sideLengthLong));
               client.send(text.split(' ')[0])
+              break;
+            
+            case /^prnt_scrn/.test(text):
+              console.log(`websocketServer.ts - line: 95 ->> prnt_scrn`)
+              getScreenshot(client)
+
               break;
 
             default:
