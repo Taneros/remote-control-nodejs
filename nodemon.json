@@ -1,0 +1,7 @@
+{
+  "watch": ["src/**/*"],
+  "pollingInterval": 300,
+  "ext": "ts",
+  "ignore": ["node_modules"],
+  "legacyWatch": true
+}
